@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using RinhaDeBackEnd.API.Models;
 
 namespace RinhaDeBackEnd.API.Controllers;
 
@@ -9,13 +10,13 @@ public class PersonController : ControllerBase
     [Route("/pessoas")]
     public void CreatePerson()
     {
-
+        throw new NotImplementedException();
     }
 
     [HttpGet]
     [Route("/pessoas/{id:guid}")]
-    public void GetPersonById()
+    public void GetPersonById(Guid id)
     {
-        
+        throw new NotImplementedException();
     }
 }
