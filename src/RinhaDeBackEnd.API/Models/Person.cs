@@ -10,7 +10,7 @@ public class Person
     
     public string Name { get; set; } = null!;
     
-    public DateOnly DateOfBirth  { get; set; }
+    public DateTime DateOfBirth  { get; set; }
     
     public string[]? Stack { get; set; } 
 }
