@@ -1,10 +1,30 @@
+using Dapper;
+using Npgsql;
+using RinhaDeBackEnd.API.Models;
+
 namespace RinhaDeBackEnd.API.Repositories;
 
 public class PersonRepository
 {
-    public void GetEveryPerson()
+    private IConfiguration _configuration;
+
+    public PersonRepository(IConfiguration configuration)
     {
-        throw new NotImplementedException();
+        _configuration = configuration;
+    }
+    
+    public IEnumerable<Person> GetAllPersons()
+    {
+        var connectionString = _configuration.GetConnectionString("DockerConnection");
+
+        using var connection = new NpgsqlConnection(connectionString);
+        string sqlCommand =
+            "SELECT id AS \"Id\", nickname AS \"Nickname\", name AS \"Name\", date_of_birth AS \"DateOfBirth\" FROM persons";
+        
+        var persons =
+            connection.Query<Person>(sqlCommand);  
+        
+        return persons;
     }
     
     public void GetPersonById()

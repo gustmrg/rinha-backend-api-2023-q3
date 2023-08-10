@@ -1,4 +1,8 @@
+using RinhaDeBackEnd.API.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<PersonRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
