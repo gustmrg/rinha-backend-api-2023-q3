@@ -1,11 +1,12 @@
 using System.Data;
 using Dapper;
 using Npgsql;
+using RinhaDeBackEnd.API.Interfaces;
 using RinhaDeBackEnd.API.Models;
 
 namespace RinhaDeBackEnd.API.Repositories;
 
-public class PersonRepository
+public class PersonRepository : IPersonRepository
 {
     private readonly IConfiguration _configuration;
     private readonly IDbConnection _dbConnection;
