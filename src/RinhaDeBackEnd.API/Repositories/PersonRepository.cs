@@ -1,3 +1,4 @@
+using System.Data;
 using Dapper;
 using Npgsql;
 using RinhaDeBackEnd.API.Models;
@@ -6,35 +7,54 @@ namespace RinhaDeBackEnd.API.Repositories;
 
 public class PersonRepository
 {
-    private IConfiguration _configuration;
+    private readonly IConfiguration _configuration;
+    private readonly IDbConnection _dbConnection;
 
     public PersonRepository(IConfiguration configuration)
     {
         _configuration = configuration;
+        _dbConnection = new NpgsqlConnection(_configuration.GetConnectionString("DockerConnection"));
     }
     
     public IEnumerable<Person> GetAllPersons()
     {
-        var connectionString = _configuration.GetConnectionString("DockerConnection");
+        string sqlCommand = "SELECT id, nickname, name, date_of_birth FROM persons";
 
-        using var connection = new NpgsqlConnection(connectionString);
-        string sqlCommand =
-            "SELECT id AS \"Id\", nickname AS \"Nickname\", name AS \"Name\", date_of_birth AS \"DateOfBirth\" FROM persons";
+        var persons = _dbConnection.Query<Person>(sqlCommand);  
         
-        var persons =
-            connection.Query<Person>(sqlCommand);  
+        _dbConnection.Dispose();
         
         return persons;
     }
     
-    public void GetPersonById()
+    public Person GetPersonById(Guid id)
     {
-        throw new NotImplementedException();
+        string sqlCommand = "SELECT id, nickname, name, date_of_birth FROM persons WHERE id = @Id";
+
+        var person = _dbConnection.QuerySingleOrDefault<Person>(sqlCommand, new { Id = id });
+        
+        _dbConnection.Dispose();
+        
+        return person;
     }
     
-    public void CreatePerson()
+    public Person CreatePerson(Person person)
     {
-        throw new NotImplementedException(); 
+        person.Id = Guid.NewGuid();
+ 
+        string sqlCommand = "INSERT INTO persons VALUES (:id, :nickname,:name, :date_of_birth)";
+        
+        _dbConnection.Execute(sqlCommand, new
+        {
+            id = person.Id,
+            nickname = person.Nickname,
+            name = person.Name,
+            date_of_birth = person.DateOfBirth.ToDateTime(TimeOnly.MinValue)
+        });
+        
+        _dbConnection.Dispose();
+
+        return person;
     }
 
     public void UpdatePerson()
@@ -45,5 +65,14 @@ public class PersonRepository
     public void DeletePerson()
     {
         throw new NotImplementedException();
+    }
+
+    public long PersonCount()
+    {
+        string sqlCommand = "SELECT COUNT(*) FROM persons";
+
+        var count = _dbConnection.ExecuteScalar<long>(sqlCommand);
+
+        return count;
     }
 }

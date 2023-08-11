@@ -16,9 +16,9 @@ public class PersonController : ControllerBase
 
     [HttpPost]
     [Route("/pessoas")]
-    public void CreatePerson()
+    public Person CreatePerson(Person person)
     {
-        throw new NotImplementedException(); 
+        return _personRepository.CreatePerson(person);
     }
     
     [HttpGet]
@@ -30,8 +30,16 @@ public class PersonController : ControllerBase
 
     [HttpGet]
     [Route("/pessoas/{id:guid}")]
-    public void GetPersonById(Guid id)
+    public Person GetPersonById(Guid id)
     {
-        throw new NotImplementedException();
+        return _personRepository.GetPersonById(id);
+    }
+    
+    [HttpGet]
+    [Route("/contagem-pessoas")]
+    public string GetPersonCount()
+    {
+        var count = _personRepository.PersonCount();
+        return $"{count} pessoas cadastradas";
     }
 }
