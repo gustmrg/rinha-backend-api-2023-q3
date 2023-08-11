@@ -67,11 +67,11 @@ public class PersonRepository
         throw new NotImplementedException();
     }
 
-    public long PersonCount()
+    public int PersonCount()
     {
         string sqlCommand = "SELECT COUNT(*) FROM persons";
 
-        var count = _dbConnection.ExecuteScalar<long>(sqlCommand);
+        var count = _dbConnection.ExecuteScalar<int>(sqlCommand);
 
         return count;
     }
