@@ -13,33 +13,37 @@ public class PersonController : ControllerBase
     {
         _personRepository = personRepository;
     }
-
-    [HttpPost]
-    [Route("/pessoas")]
-    public Person CreatePerson(Person person)
-    {
-        return _personRepository.CreatePerson(person);
-    }
     
-    [HttpGet]
-    [Route("/pessoas")]
+    // TODO: Alterar para aceitar termo de busca
+    [HttpGet("/pessoas")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public IEnumerable<Person> GetPersons()
     {
         return _personRepository.GetAllPersons();
     }
 
-    [HttpGet]
-    [Route("/pessoas/{id:guid}")]
-    public Person GetPersonById(Guid id)
+    [HttpGet("/pessoas/{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<Person> GetPersonById(Guid id)
     {
-        return _personRepository.GetPersonById(id);
+        return Ok(_personRepository.GetPersonById(id));
+    }
+
+    [HttpPost("/pessoas")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    public Person CreatePerson(Person person)
+    {
+        return _personRepository.CreatePerson(person);
     }
     
-    [HttpGet]
-    [Route("/contagem-pessoas")]
-    public string GetPersonCount()
+    [HttpGet("/contagem-pessoas")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public ActionResult<string> GetPersonCount()
     {
         var count = _personRepository.PersonCount();
-        return $"{count} pessoas cadastradas";
+        return Ok($"{count} pessoas cadastradas");
     }
 }
