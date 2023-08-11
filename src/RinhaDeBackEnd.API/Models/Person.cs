@@ -12,5 +12,5 @@ public class Person
     
     public DateOnly DateOfBirth  { get; set; }
     
-    public string[]? Stack { get; set; } 
+    public string[]? Stack { get; set; }
 }

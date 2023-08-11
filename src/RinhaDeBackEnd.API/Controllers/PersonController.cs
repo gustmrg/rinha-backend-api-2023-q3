@@ -1,25 +1,25 @@
 using Microsoft.AspNetCore.Mvc;
+using RinhaDeBackEnd.API.Interfaces;
 using RinhaDeBackEnd.API.Models;
-using RinhaDeBackEnd.API.Repositories;
 
 namespace RinhaDeBackEnd.API.Controllers;
 
 [ApiController]
 public class PersonController : ControllerBase
 {
-    private readonly PersonRepository _personRepository;
+    private readonly IPersonService _personService;
 
-    public PersonController(PersonRepository personRepository)
+    public PersonController(IPersonService personService)
     {
-        _personRepository = personRepository;
+        _personService = personService;
     }
-    
+
     // TODO: Alterar para aceitar termo de busca
     [HttpGet("/pessoas")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IEnumerable<Person> GetPersons()
     {
-        return _personRepository.GetAllPersons();
+        return _personService.GetAll();
     }
 
     [HttpGet("/pessoas/{id:guid}")]
@@ -27,7 +27,7 @@ public class PersonController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<Person> GetPersonById(Guid id)
     {
-        return Ok(_personRepository.GetPersonById(id));
+        return Ok(_personService.GetById(id));
     }
 
     [HttpPost("/pessoas")]
@@ -36,14 +36,14 @@ public class PersonController : ControllerBase
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public Person CreatePerson(Person person)
     {
-        return _personRepository.CreatePerson(person);
+        return _personService.Add(person);
     }
     
     [HttpGet("/contagem-pessoas")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<string> GetPersonCount()
     {
-        var count = _personRepository.PersonCount();
+        var count = _personService.Count();
         return Ok($"{count} pessoas cadastradas");
     }
 }
