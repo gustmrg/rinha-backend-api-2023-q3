@@ -6,7 +6,7 @@ public interface IPessoaRepository
 {
     public Pessoa Add(Pessoa person);
     public IEnumerable<Pessoa> Get();
-    public Pessoa GetById(Guid id);
+    public Task<Pessoa> GetById(Guid id);
     public void UpdatePerson();
     public void DeletePerson();
     public int Count();

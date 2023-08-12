@@ -7,11 +7,11 @@ using RinhaDeBackEnd.API.Models;
 namespace RinhaDeBackEnd.API.Controllers;
 
 [ApiController]
-public class PersonController : ControllerBase
+public class PessoasController : ControllerBase
 {
     private readonly IPessoaRepository _pessoaRepository;
 
-    public PersonController(IPessoaRepository pessoaRepository)
+    public PessoasController(IPessoaRepository pessoaRepository)
     {
         _pessoaRepository = pessoaRepository;
     }
@@ -28,14 +28,19 @@ public class PersonController : ControllerBase
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IResult GetPessoaById(Guid id)
+    public async Task<IResult> GetPessoaById(Guid id)
     {
-        var pessoa = _pessoaRepository.GetById(id);
+        try
+        {
+            var pessoa = await _pessoaRepository.GetById(id);
         
-        if (pessoa is null)
+            return pessoa == null ?
+                Results.NotFound() : Results.Ok(pessoa);
+        }
+        catch (Exception)
+        {
             return Results.NotFound();
-        
-        return Results.Ok(pessoa);
+        }
     }
 
     [HttpPost("/pessoas")]

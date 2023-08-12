@@ -47,14 +47,14 @@ public class PessoaRepository : IPessoaRepository
         return pessoas;
     }
     
-    public Pessoa GetById(Guid id)
+    public Task<Pessoa> GetById(Guid id)
     {
         var pessoa = _dbConnection.QuerySingleOrDefault<Pessoa>(
             @"SELECT Id, Apelido, Nome, Nascimento FROM pessoas WHERE id = @Id", new { Id = id });
         
         _dbConnection.Dispose();
         
-        return pessoa;
+        return Task.FromResult(pessoa);
     }
 
     public void UpdatePerson()
