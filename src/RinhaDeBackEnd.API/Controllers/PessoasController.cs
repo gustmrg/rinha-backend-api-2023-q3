@@ -1,8 +1,10 @@
 using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Npgsql;
 using RinhaDeBackEnd.API.Interfaces;
 using RinhaDeBackEnd.API.Models;
+using PostgresException = Npgsql.PostgresException;
 
 namespace RinhaDeBackEnd.API.Controllers;
 
@@ -25,7 +27,6 @@ public class PessoasController : ControllerBase
     }
 
     [HttpGet("/pessoas/{id:guid}")]
-    [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IResult> GetPessoaById(Guid id)
@@ -47,7 +48,7 @@ public class PessoasController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    public IResult CreatePerson(Pessoa model)
+    public async Task<IResult> CreatePerson(Pessoa request)
     {
 
         if (!ModelState.IsValid)
@@ -55,12 +56,18 @@ public class PessoasController : ControllerBase
 
         try
         {
-            var pessoa = _pessoaRepository.Add(model);
+            var pessoa = await _pessoaRepository.Add(request);
             return Results.Created($"/pessoas/{pessoa.Id}", pessoa);
         }
-        catch (Exception e)
+        catch (PostgresException ex)
         {
-            throw new Exception();
+            if (ex.SqlState == "23505")
+                return Results.UnprocessableEntity("Já existe um usuário criado com este apelido.");
+            throw ex;
+        }
+        catch (Exception)
+        {
+            return Results.BadRequest();
         }
     }
     

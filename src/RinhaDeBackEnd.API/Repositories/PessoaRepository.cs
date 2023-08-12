@@ -17,18 +17,19 @@ public class PessoaRepository : IPessoaRepository
         _dbConnection = new NpgsqlConnection(_configuration.GetConnectionString("DockerConnection"));
     }
     
-    public Pessoa Add(Pessoa pessoa)
+    public async Task<Pessoa> Add(Pessoa pessoa)
     {
         pessoa.Id = Guid.NewGuid();
  
-        string sqlCommand = "INSERT INTO pessoas VALUES (@Id, @Apelido, @Nome, @Nascimento)";
+        string sqlCommand = "INSERT INTO pessoas VALUES (@Id, @Apelido, @Nome, @Nascimento, @Stack)";
         
-        _dbConnection.Execute(sqlCommand, new
+        await _dbConnection.ExecuteAsync(sqlCommand, new
         {
             id = pessoa.Id,
             apelido = pessoa.Apelido,
             nome = pessoa.Nome,
-            nascimento = pessoa.Nascimento
+            nascimento = pessoa.Nascimento,
+            stack = pessoa.Stack
         });
         
         _dbConnection.Dispose();

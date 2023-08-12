@@ -4,7 +4,7 @@ namespace RinhaDeBackEnd.API.Interfaces;
 
 public interface IPessoaRepository
 {
-    public Pessoa Add(Pessoa person);
+    public Task<Pessoa> Add(Pessoa pessoa);
     public IEnumerable<Pessoa> Get();
     public Task<Pessoa> GetById(Guid id);
     public void UpdatePerson();
