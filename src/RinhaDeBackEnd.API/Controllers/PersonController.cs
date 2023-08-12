@@ -9,40 +9,40 @@ namespace RinhaDeBackEnd.API.Controllers;
 [ApiController]
 public class PersonController : ControllerBase
 {
-    private readonly IPersonRepository _personRepository;
+    private readonly IPessoaRepository _pessoaRepository;
 
-    public PersonController(IPersonRepository personRepository)
+    public PersonController(IPessoaRepository pessoaRepository)
     {
-        _personRepository = personRepository;
+        _pessoaRepository = pessoaRepository;
     }
 
     // TODO: Alterar para aceitar termo de busca
     [HttpGet("/pessoas")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public IEnumerable<Person> GetPersons()
+    public IEnumerable<Pessoa> GetPessoas()
     {
-        return _personRepository.Get();
+        return _pessoaRepository.Get();
     }
 
     [HttpGet("/pessoas/{id:guid}")]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IResult GetPersonById(Guid id)
+    public IResult GetPessoaById(Guid id)
     {
-        var person = _personRepository.GetById(id);
+        var pessoa = _pessoaRepository.GetById(id);
         
-        if (person is null)
+        if (pessoa is null)
             return Results.NotFound();
         
-        return Results.Ok(person);
+        return Results.Ok(pessoa);
     }
 
     [HttpPost("/pessoas")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    public IResult CreatePerson(Person model)
+    public IResult CreatePerson(Pessoa model)
     {
 
         if (!ModelState.IsValid)
@@ -50,8 +50,8 @@ public class PersonController : ControllerBase
 
         try
         {
-            var person = _personRepository.Add(model);
-            return Results.Created($"/pessoas/{person.Id}", person);
+            var pessoa = _pessoaRepository.Add(model);
+            return Results.Created($"/pessoas/{pessoa.Id}", pessoa);
         }
         catch (Exception e)
         {
@@ -63,7 +63,7 @@ public class PersonController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<string> GetPersonCount()
     {
-        var count = _personRepository.Count();
+        var count = _pessoaRepository.Count();
         return Ok($"{count} pessoas cadastradas");
     }
 }

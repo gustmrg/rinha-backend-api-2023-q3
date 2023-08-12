@@ -3,7 +3,7 @@ using RinhaDeBackEnd.API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<IPersonRepository, PersonRepository>();
+builder.Services.AddScoped<IPessoaRepository, PessoaRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

@@ -2,19 +2,19 @@ using FluentValidation;
 
 namespace RinhaDeBackEnd.API.Models;
 
-public class PersonValidator : AbstractValidator<Person>
+public class PessoaValidator : AbstractValidator<Pessoa>
 {
-    public PersonValidator()
+    public PessoaValidator()
     {
-        RuleFor(p => p.Nickname)
+        RuleFor(p => p.Apelido)
             .NotEmpty().WithMessage("Obrigatório informar um apelido")
             .Length(1, 32).WithMessage("O campo apelido deve ter entre 1 e 32 caracteres");
         
-        RuleFor(p => p.Name)
+        RuleFor(p => p.Nome)
             .NotEmpty().WithMessage("Obrigatório informar um nome")
             .Length(1, 100).WithMessage("O campo nome deve ter entre 1 e 100 caracteres");
 
-        RuleFor(p => p.DateOfBirth)
+        RuleFor(p => p.Nascimento)
             .NotEmpty().Must(ValidDate).WithMessage("Obrigatório informar uma data de nascimento");
     }
 

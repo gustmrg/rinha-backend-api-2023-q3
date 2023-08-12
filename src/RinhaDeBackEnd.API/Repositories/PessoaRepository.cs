@@ -6,55 +6,55 @@ using RinhaDeBackEnd.API.Models;
 
 namespace RinhaDeBackEnd.API.Repositories;
 
-public class PersonRepository : IPersonRepository
+public class PessoaRepository : IPessoaRepository
 {
     private readonly IConfiguration _configuration;
     private readonly IDbConnection _dbConnection;
 
-    public PersonRepository(IConfiguration configuration)
+    public PessoaRepository(IConfiguration configuration)
     {
         _configuration = configuration;
         _dbConnection = new NpgsqlConnection(_configuration.GetConnectionString("DockerConnection"));
     }
     
-    public Person Add(Person person)
+    public Pessoa Add(Pessoa pessoa)
     {
-        person.Id = Guid.NewGuid();
+        pessoa.Id = Guid.NewGuid();
  
-        string sqlCommand = "INSERT INTO persons VALUES (:id, :nickname,:name, :date_of_birth)";
+        string sqlCommand = "INSERT INTO pessoas VALUES (@Id, @Apelido, @Nome, @Nascimento)";
         
         _dbConnection.Execute(sqlCommand, new
         {
-            id = person.Id,
-            nickname = person.Nickname,
-            name = person.Name,
-            date_of_birth = person.DateOfBirth
+            id = pessoa.Id,
+            apelido = pessoa.Apelido,
+            nome = pessoa.Nome,
+            nascimento = pessoa.Nascimento
         });
         
         _dbConnection.Dispose();
 
-        return person;
+        return pessoa;
     }
     
-    public IEnumerable<Person> Get()
+    public IEnumerable<Pessoa> Get()
     {
-        string sqlCommand = "SELECT id, nickname, name, date_of_birth FROM persons";
+        string sqlCommand = "SELECT Id, Apelido, Nome, Nascimento FROM pessoas";
 
-        var persons = _dbConnection.Query<Person>(sqlCommand);  
+        var pessoas = _dbConnection.Query<Pessoa>(sqlCommand);  
         
         _dbConnection.Dispose();
         
-        return persons;
+        return pessoas;
     }
     
-    public Person GetById(Guid id)
+    public Pessoa GetById(Guid id)
     {
-        var person = _dbConnection.QuerySingleOrDefault<Person>(
-            @"SELECT id, nickname, name, date_of_birth FROM persons WHERE id = @Id", new { Id = id });
+        var pessoa = _dbConnection.QuerySingleOrDefault<Pessoa>(
+            @"SELECT Id, Apelido, Nome, Nascimento FROM pessoas WHERE id = @Id", new { Id = id });
         
         _dbConnection.Dispose();
         
-        return person;
+        return pessoa;
     }
 
     public void UpdatePerson()
@@ -69,7 +69,7 @@ public class PersonRepository : IPersonRepository
 
     public int Count()
     {
-        string sqlCommand = "SELECT COUNT(*) FROM persons";
+        string sqlCommand = "SELECT COUNT(*) FROM pessoas";
 
         var count = _dbConnection.ExecuteScalar<int>(sqlCommand);
 
