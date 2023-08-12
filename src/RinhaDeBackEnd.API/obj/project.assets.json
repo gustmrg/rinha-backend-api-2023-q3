@@ -59,6 +59,19 @@
           }
         }
       },
+      "FluentValidation/11.7.0": {
+        "type": "package",
+        "compile": {
+          "lib/net7.0/FluentValidation.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net7.0/FluentValidation.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Microsoft.AspNetCore.OpenApi/7.0.9": {
         "type": "package",
         "dependencies": {
@@ -920,6 +933,29 @@
         "lib/net5.0/Dapper.xml",
         "lib/netstandard2.0/Dapper.dll",
         "lib/netstandard2.0/Dapper.xml"
+      ]
+    },
+    "FluentValidation/11.7.0": {
+      "sha512": "vySY5WLvMx8eUq01IDM7iXriWoEkldvB/zEIGlkmoImJrC1m3YRdxcg9srFiy95sUzOHcgPcn2/5678zjhZCiA==",
+      "type": "package",
+      "path": "fluentvalidation/11.7.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "fluent-validation-icon.png",
+        "fluentvalidation.11.7.0.nupkg.sha512",
+        "fluentvalidation.nuspec",
+        "lib/net5.0/FluentValidation.dll",
+        "lib/net5.0/FluentValidation.xml",
+        "lib/net6.0/FluentValidation.dll",
+        "lib/net6.0/FluentValidation.xml",
+        "lib/net7.0/FluentValidation.dll",
+        "lib/net7.0/FluentValidation.xml",
+        "lib/netstandard2.0/FluentValidation.dll",
+        "lib/netstandard2.0/FluentValidation.xml",
+        "lib/netstandard2.1/FluentValidation.dll",
+        "lib/netstandard2.1/FluentValidation.xml"
       ]
     },
     "Microsoft.AspNetCore.OpenApi/7.0.9": {
@@ -2596,6 +2632,7 @@
   "projectFileDependencyGroups": {
     "net7.0": [
       "Dapper >= 2.0.143",
+      "FluentValidation >= 11.7.0",
       "Microsoft.AspNetCore.OpenApi >= 7.0.9",
       "Microsoft.Data.SqlClient >= 5.1.1",
       "Npgsql >= 7.0.4",
@@ -2644,6 +2681,10 @@
           "Dapper": {
             "target": "Package",
             "version": "[2.0.143, )"
+          },
+          "FluentValidation": {
+            "target": "Package",
+            "version": "[11.7.0, )"
           },
           "Microsoft.AspNetCore.OpenApi": {
             "target": "Package",

@@ -1,12 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "ASNHEeSUz1X6wyyU8VfpRDwrFz8pTddUlhMXUKszBHXo380bCF4WioM4n3C7mWdOtn0237tYM6+X+TaRu9RQZQ==",
+  "dgSpecHash": "XgBkug9TUmE/rnP3blg8itI9D1WgTOOW3X4rYB4c4MJY7ck4jjDXAr5AwMd/h4wPHVvUivsiDyY6Fvxw7VXGvQ==",
   "success": true,
   "projectFilePath": "/Users/gustavo/Dev/Challenges/rinha-backend-api/src/RinhaDeBackEnd.API/RinhaDeBackEnd.API.csproj",
   "expectedPackageFiles": [
     "/Users/gustavo/.nuget/packages/azure.core/1.25.0/azure.core.1.25.0.nupkg.sha512",
     "/Users/gustavo/.nuget/packages/azure.identity/1.7.0/azure.identity.1.7.0.nupkg.sha512",
     "/Users/gustavo/.nuget/packages/dapper/2.0.143/dapper.2.0.143.nupkg.sha512",
+    "/Users/gustavo/.nuget/packages/fluentvalidation/11.7.0/fluentvalidation.11.7.0.nupkg.sha512",
     "/Users/gustavo/.nuget/packages/microsoft.aspnetcore.openapi/7.0.9/microsoft.aspnetcore.openapi.7.0.9.nupkg.sha512",
     "/Users/gustavo/.nuget/packages/microsoft.bcl.asyncinterfaces/1.1.1/microsoft.bcl.asyncinterfaces.1.1.1.nupkg.sha512",
     "/Users/gustavo/.nuget/packages/microsoft.csharp/4.5.0/microsoft.csharp.4.5.0.nupkg.sha512",

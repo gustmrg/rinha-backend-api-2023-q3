@@ -17,7 +17,26 @@ public class PersonRepository : IPersonRepository
         _dbConnection = new NpgsqlConnection(_configuration.GetConnectionString("DockerConnection"));
     }
     
-    public IEnumerable<Person> GetAllPersons()
+    public Person Add(Person person)
+    {
+        person.Id = Guid.NewGuid();
+ 
+        string sqlCommand = "INSERT INTO persons VALUES (:id, :nickname,:name, :date_of_birth)";
+        
+        _dbConnection.Execute(sqlCommand, new
+        {
+            id = person.Id,
+            nickname = person.Nickname,
+            name = person.Name,
+            date_of_birth = person.DateOfBirth
+        });
+        
+        _dbConnection.Dispose();
+
+        return person;
+    }
+    
+    public IEnumerable<Person> Get()
     {
         string sqlCommand = "SELECT id, nickname, name, date_of_birth FROM persons";
 
@@ -39,23 +58,11 @@ public class PersonRepository : IPersonRepository
         return person;
     }
     
-    public Person CreatePerson(Person person)
-    {
-        person.Id = Guid.NewGuid();
- 
-        string sqlCommand = "INSERT INTO persons VALUES (:id, :nickname,:name, :date_of_birth)";
-        
-        _dbConnection.Execute(sqlCommand, new
-        {
-            id = person.Id,
-            nickname = person.Nickname,
-            name = person.Name,
-            date_of_birth = person.DateOfBirth.ToDateTime(TimeOnly.MinValue)
-        });
-        
-        _dbConnection.Dispose();
 
-        return person;
+
+    public Person GetById(Guid id)
+    {
+        throw new NotImplementedException();
     }
 
     public void UpdatePerson()
@@ -68,7 +75,7 @@ public class PersonRepository : IPersonRepository
         throw new NotImplementedException();
     }
 
-    public int PersonCount()
+    public int Count()
     {
         string sqlCommand = "SELECT COUNT(*) FROM persons";
 

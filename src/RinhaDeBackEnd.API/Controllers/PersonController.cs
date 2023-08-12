@@ -7,11 +7,11 @@ namespace RinhaDeBackEnd.API.Controllers;
 [ApiController]
 public class PersonController : ControllerBase
 {
-    private readonly IPersonService _personService;
+    private readonly IPersonRepository _personRepository;
 
-    public PersonController(IPersonService personService)
+    public PersonController(IPersonRepository personRepository)
     {
-        _personService = personService;
+        _personRepository = personRepository;
     }
 
     // TODO: Alterar para aceitar termo de busca
@@ -19,7 +19,7 @@ public class PersonController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IEnumerable<Person> GetPersons()
     {
-        return _personService.GetAll();
+        return _personRepository.Get();
     }
 
     [HttpGet("/pessoas/{id:guid}")]
@@ -27,23 +27,35 @@ public class PersonController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<Person> GetPersonById(Guid id)
     {
-        return Ok(_personService.GetById(id));
+        return Ok(_personRepository.GetById(id));
     }
 
     [HttpPost("/pessoas")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    public Person CreatePerson(Person person)
+    public IResult CreatePerson(Person model)
     {
-        return _personService.Add(person);
+
+        if (!ModelState.IsValid)
+            return Results.UnprocessableEntity();
+
+        try
+        {
+            var person = _personRepository.Add(model);
+            return Results.Created($"/pessoas/{person.Id}", person);
+        }
+        catch (Exception e)
+        {
+            throw new Exception();
+        }
     }
     
     [HttpGet("/contagem-pessoas")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<string> GetPersonCount()
     {
-        var count = _personService.Count();
+        var count = _personRepository.Count();
         return Ok($"{count} pessoas cadastradas");
     }
 }
