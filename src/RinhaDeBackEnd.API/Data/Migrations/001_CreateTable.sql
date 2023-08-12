@@ -1,8 +1,9 @@
 CREATE DATABASE rinha;
 
-CREATE TABLE IF NOT EXISTS persons (
-    person_id UUID PRIMARY KEY,
-    nickname VARCHAR(32) UNIQUE NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    date_of_birth DATE NOT NULL
+CREATE TABLE IF NOT EXISTS pessoas (
+    id UUID PRIMARY KEY,
+    apelido VARCHAR(32) UNIQUE NOT NULL,
+    nome VARCHAR(100) NOT NULL,
+    nascimento DATE NOT NULL,
+    stack VARCHAR[] NULL
 );

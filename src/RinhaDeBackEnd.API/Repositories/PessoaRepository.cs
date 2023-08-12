@@ -47,14 +47,14 @@ public class PessoaRepository : IPessoaRepository
         return pessoas;
     }
     
-    public Task<Pessoa> GetById(Guid id)
+    public async Task<Pessoa> GetById(Guid id)
     {
-        var pessoa = _dbConnection.QuerySingleOrDefault<Pessoa>(
-            @"SELECT Id, Apelido, Nome, Nascimento FROM pessoas WHERE id = @Id", new { Id = id });
+        var pessoa = await _dbConnection.QuerySingleOrDefaultAsync<Pessoa>(
+            @"SELECT Id, Apelido, Nome, Nascimento, Stack FROM pessoas WHERE Id = @Id", new { Id = id });
         
         _dbConnection.Dispose();
         
-        return Task.FromResult(pessoa);
+        return pessoa;
     }
 
     public void UpdatePerson()
@@ -67,11 +67,9 @@ public class PessoaRepository : IPessoaRepository
         throw new NotImplementedException();
     }
 
-    public int Count()
+    public async Task<int> Count()
     {
-        string sqlCommand = "SELECT COUNT(*) FROM pessoas";
-
-        var count = _dbConnection.ExecuteScalar<int>(sqlCommand);
+        var count = await _dbConnection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM pessoas");
 
         return count;
     }

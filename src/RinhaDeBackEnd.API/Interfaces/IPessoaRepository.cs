@@ -9,5 +9,5 @@ public interface IPessoaRepository
     public Task<Pessoa> GetById(Guid id);
     public void UpdatePerson();
     public void DeletePerson();
-    public int Count();
+    public Task<int> Count();
 }

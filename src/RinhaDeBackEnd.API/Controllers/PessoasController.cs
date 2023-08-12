@@ -66,9 +66,9 @@ public class PessoasController : ControllerBase
     
     [HttpGet("/contagem-pessoas")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<string> GetPersonCount()
+    public async Task<IResult> GetPersonCount()
     {
-        var count = _pessoaRepository.Count();
-        return Ok($"{count} pessoas cadastradas");
+        var count = await _pessoaRepository.Count();
+        return Results.Ok($"{count} pessoas cadastradas");
     }
 }
