@@ -1,4 +1,6 @@
+using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using RinhaDeBackEnd.API.Interfaces;
 using RinhaDeBackEnd.API.Models;
 
@@ -23,11 +25,17 @@ public class PersonController : ControllerBase
     }
 
     [HttpGet("/pessoas/{id:guid}")]
+    [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<Person> GetPersonById(Guid id)
+    public IResult GetPersonById(Guid id)
     {
-        return Ok(_personRepository.GetById(id));
+        var person = _personRepository.GetById(id);
+        
+        if (person is null)
+            return Results.NotFound();
+        
+        return Results.Ok(person);
     }
 
     [HttpPost("/pessoas")]

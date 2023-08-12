@@ -47,22 +47,14 @@ public class PersonRepository : IPersonRepository
         return persons;
     }
     
-    public Person GetPersonById(Guid id)
+    public Person GetById(Guid id)
     {
-        string sqlCommand = "SELECT id, nickname, name, date_of_birth FROM persons WHERE id = @Id";
-
-        var person = _dbConnection.QuerySingleOrDefault<Person>(sqlCommand, new { Id = id });
+        var person = _dbConnection.QuerySingleOrDefault<Person>(
+            @"SELECT id, nickname, name, date_of_birth FROM persons WHERE id = @Id", new { Id = id });
         
         _dbConnection.Dispose();
         
         return person;
-    }
-    
-
-
-    public Person GetById(Guid id)
-    {
-        throw new NotImplementedException();
     }
 
     public void UpdatePerson()
