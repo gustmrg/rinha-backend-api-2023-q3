@@ -13,6 +13,12 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+{
+    using var scope = app.Services.CreateScope();
+    var context = scope.ServiceProvider.GetRequiredService<DataContext>();
+    await context.Init();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
