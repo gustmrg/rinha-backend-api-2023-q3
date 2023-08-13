@@ -62,7 +62,7 @@ public class PessoasController : ControllerBase
         catch (PostgresException ex)
         {
             if (ex.SqlState == "23505")
-                return Results.UnprocessableEntity("Já existe um usuário criado com este apelido.");
+                return Results.UnprocessableEntity("Já existe uma pessoa criada com este apelido.");
             throw ex;
         }
         catch (Exception)
@@ -76,6 +76,6 @@ public class PessoasController : ControllerBase
     public async Task<IResult> GetPersonCount()
     {
         var count = await _pessoaRepository.Count();
-        return Results.Ok($"{count} pessoas cadastradas");
+        return Results.Ok($"{count} pessoas cadastradas!");
     }
 }
