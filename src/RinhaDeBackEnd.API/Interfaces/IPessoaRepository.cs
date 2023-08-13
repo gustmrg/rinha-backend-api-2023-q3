@@ -6,7 +6,7 @@ public interface IPessoaRepository
 {
     public Task<Pessoa> Add(Pessoa pessoa);
     public IEnumerable<Pessoa> Get();
-    public Task<IEnumerable<Pessoa>> GetByFilter(string text);
+    public Task<IEnumerable<Pessoa>> GetBySearchTerm(string term);
     public Task<Pessoa> GetById(Guid id);
     public void UpdatePerson();
     public void DeletePerson();

@@ -40,7 +40,7 @@ public class PessoaRepository : IPessoaRepository
         
         return pessoas;
     }
-    
+
     public async Task<Pessoa> GetById(Guid id)
     {
         var pessoa = await _dbConnection.QuerySingleOrDefaultAsync<Pessoa>(
@@ -50,11 +50,11 @@ public class PessoaRepository : IPessoaRepository
         return pessoa;
     }
     
-    public async Task<IEnumerable<Pessoa>> GetByFilter(string text)
+    public async Task<IEnumerable<Pessoa>> GetBySearchTerm(string term)
     {
         var pessoas = await _dbConnection.QueryAsync<Pessoa>(
-            "GetByFilter", 
-            text, 
+            "GetBySearchTerm", 
+            term, 
             commandType: CommandType.StoredProcedure);
 
         return pessoas;
@@ -73,7 +73,7 @@ public class PessoaRepository : IPessoaRepository
 
     public async Task<int> Count()
     {
-        var count = await _dbConnection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM pessoas");
+        var count = await _dbConnection.ExecuteScalarAsync<int>("SELECT COUNT(1) FROM pessoas");
 
         return count;
     }

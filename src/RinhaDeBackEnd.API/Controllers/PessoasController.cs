@@ -21,7 +21,7 @@ public class PessoasController : ControllerBase
     // TODO: Alterar para aceitar termo de busca
     [HttpGet("/pessoas")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public IEnumerable<Pessoa> GetPessoas()
+    public IEnumerable<Pessoa> GetPessoasBySearchTermAsync([FromQuery] string term)
     {
         return _pessoaRepository.Get();
     }
@@ -29,7 +29,7 @@ public class PessoasController : ControllerBase
     [HttpGet("/pessoas/{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> GetPessoaById(Guid id)
+    public async Task<IResult> GetPessoaByIdAsync(Guid id)
     {
         try
         {
@@ -48,7 +48,7 @@ public class PessoasController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    public async Task<IResult> CreatePerson(Pessoa request)
+    public async Task<IResult> CreatePersonAsync(Pessoa request)
     {
 
         if (!ModelState.IsValid)
@@ -73,7 +73,7 @@ public class PessoasController : ControllerBase
     
     [HttpGet("/contagem-pessoas")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IResult> GetPersonCount()
+    public async Task<IResult> GetPersonCountAsync()
     {
         var count = await _pessoaRepository.Count();
         return Results.Ok($"{count} pessoas cadastradas!");
