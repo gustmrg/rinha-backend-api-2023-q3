@@ -1,6 +1,7 @@
 using System.Data;
 using Dapper;
 using Npgsql;
+using RinhaDeBackEnd.API.Helpers;
 using RinhaDeBackEnd.API.Interfaces;
 using RinhaDeBackEnd.API.Models;
 
@@ -8,20 +9,20 @@ namespace RinhaDeBackEnd.API.Repositories;
 
 public class PessoaRepository : IPessoaRepository
 {
-    private readonly IConfiguration _configuration;
-    private readonly IDbConnection _dbConnection;
+    private readonly DataContext _context;
 
-    public PessoaRepository(IConfiguration configuration)
+    public PessoaRepository(DataContext context)
     {
-        _configuration = configuration;
-        _dbConnection = new NpgsqlConnection(_configuration.GetConnectionString("DockerConnection"));
+        _context = context;
     }
     
     public async Task<Pessoa> Add(Pessoa pessoa)
     {
         pessoa.Id = Guid.NewGuid();
         
-        await _dbConnection.ExecuteAsync("INSERT INTO pessoas VALUES (@Id, @Apelido, @Nome, @Nascimento, @Stack)",
+        using var connection = _context.CreateConnection();
+        
+        await connection.ExecuteAsync("INSERT INTO pessoas VALUES (@Id, @Apelido, @Nome, @Nascimento, @Stack)",
             new {
             id = pessoa.Id,
             apelido = pessoa.Apelido,
@@ -35,7 +36,9 @@ public class PessoaRepository : IPessoaRepository
     
     public IEnumerable<Pessoa> Get()
     {
-        var pessoas = _dbConnection.Query<Pessoa>(
+        using var connection = _context.CreateConnection();
+        
+        var pessoas = connection.Query<Pessoa>(
             "SELECT Id, Apelido, Nome, Nascimento, Stack FROM pessoas");
         
         return pessoas;
@@ -43,7 +46,9 @@ public class PessoaRepository : IPessoaRepository
 
     public async Task<Pessoa> GetById(Guid id)
     {
-        var pessoa = await _dbConnection.QuerySingleOrDefaultAsync<Pessoa>(
+        using var connection = _context.CreateConnection();
+        
+        var pessoa = await connection.QuerySingleOrDefaultAsync<Pessoa>(
             @"SELECT Id, Apelido, Nome, Nascimento, Stack FROM pessoas WHERE Id = @Id", 
             new { Id = id });
         
@@ -52,7 +57,9 @@ public class PessoaRepository : IPessoaRepository
     
     public async Task<IEnumerable<Pessoa>> FindByTerm(string term)
     {
-        var pessoas = await _dbConnection.QueryAsync<Pessoa>(
+        using var connection = _context.CreateConnection();
+        
+        var pessoas = await connection.QueryAsync<Pessoa>(
             @"SELECT *
                 FROM pessoas
                 WHERE Nome ILIKE '%' || @Term || '%'
@@ -77,7 +84,9 @@ public class PessoaRepository : IPessoaRepository
 
     public async Task<int> Count()
     {
-        var count = await _dbConnection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM pessoas");
+        using var connection = _context.CreateConnection();
+        
+        var count = await connection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM pessoas");
 
         return count;
     }

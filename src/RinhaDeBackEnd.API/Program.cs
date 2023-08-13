@@ -1,8 +1,10 @@
+using RinhaDeBackEnd.API.Helpers;
 using RinhaDeBackEnd.API.Interfaces;
 using RinhaDeBackEnd.API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSingleton<DataContext>();
 builder.Services.AddScoped<IPessoaRepository, PessoaRepository>();
 
 builder.Services.AddControllers();
