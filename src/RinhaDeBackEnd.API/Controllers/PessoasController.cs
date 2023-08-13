@@ -17,13 +17,15 @@ public class PessoasController : ControllerBase
     {
         _pessoaRepository = pessoaRepository;
     }
-
-    // TODO: Alterar para aceitar termo de busca
+    
     [HttpGet("/pessoas")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public IEnumerable<Pessoa> GetPessoasBySearchTermAsync([FromQuery] string term)
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IResult> GetPessoasBySearchTermAsync([FromQuery] string? t)
     {
-        return _pessoaRepository.Get();
+        return t == null ? 
+            Results.BadRequest("É obrigatório informar um valor no parâmetro [t].") : 
+            Results.Ok(await _pessoaRepository.FindByTerm(t));
     }
 
     [HttpGet("/pessoas/{id:guid}")]

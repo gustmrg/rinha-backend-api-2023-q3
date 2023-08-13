@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace RinhaDeBackEnd.API.Models;
 
 public class Pessoa

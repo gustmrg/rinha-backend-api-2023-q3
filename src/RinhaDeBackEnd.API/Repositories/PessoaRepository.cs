@@ -50,12 +50,16 @@ public class PessoaRepository : IPessoaRepository
         return pessoa;
     }
     
-    public async Task<IEnumerable<Pessoa>> GetBySearchTerm(string term)
+    public async Task<IEnumerable<Pessoa>> FindByTerm(string term)
     {
         var pessoas = await _dbConnection.QueryAsync<Pessoa>(
-            "GetBySearchTerm", 
-            term, 
-            commandType: CommandType.StoredProcedure);
+            @"SELECT *
+                FROM pessoas
+                WHERE Nome ILIKE '%' || @Term || '%'
+	                OR Apelido ILIKE '%' || @Term || '%'
+	                OR @Term ILIKE SOME(Stack)
+                LIMIT 50;", 
+            new { Term = term } );
 
         return pessoas;
     }
@@ -73,7 +77,7 @@ public class PessoaRepository : IPessoaRepository
 
     public async Task<int> Count()
     {
-        var count = await _dbConnection.ExecuteScalarAsync<int>("SELECT COUNT(1) FROM pessoas");
+        var count = await _dbConnection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM pessoas");
 
         return count;
     }
