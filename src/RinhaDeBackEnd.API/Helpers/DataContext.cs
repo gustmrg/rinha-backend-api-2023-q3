@@ -1,21 +1,22 @@
 using System.Data;
 using Dapper;
 using Npgsql;
+using RinhaDeBackEnd.API.Interfaces;
 
 namespace RinhaDeBackEnd.API.Helpers;
 
 public class DataContext
 {
-    private readonly IConfiguration _configuration;
+    private readonly IDbContext _dbContext;
 
-    public DataContext(IConfiguration configuration)
+    public DataContext(IDbContext dbContext)
     {
-        _configuration = configuration;
+        _dbContext = dbContext;
     }
 
     public IDbConnection CreateConnection()
     {
-        var connectionString = _configuration.GetConnectionString("DockerConnection");
+        var connectionString = _dbContext.ConnectionString;
         return new NpgsqlConnection(connectionString);
     }
 
@@ -30,7 +31,7 @@ public class DataContext
     {
         var connectionString = "Server=localhost;Port=5432;Database=postgres;User Id=postgres;Password=postgrespw";
         using var connection = new NpgsqlConnection(connectionString);
-        
+
         // Check if database already exists
         var sqlDbCount = $"SELECT COUNT(*) FROM pg_database WHERE datname = 'rinha';";
         var dbCount = await connection.ExecuteScalarAsync<int>(sqlDbCount);
@@ -64,7 +65,7 @@ public class DataContext
 	                    CREATE INDEX IF NOT EXISTS idx_pessoas_apelido ON pessoas USING btree(apelido);
 	                    CREATE INDEX IF NOT EXISTS idx_pessoas_stack ON pessoas USING gin(stack);
                     COMMIT;";
-        
+
         await connection.ExecuteAsync(sql);
     }
 }
