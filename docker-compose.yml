@@ -3,8 +3,8 @@ services:
   rinha-api-01: # API - Instância 01
     image: rinhadebackend.api
     build:
-      context: .
-      dockerfile: /src/RinhaDeBackEnd.API/Dockerfile
+      context: src
+      dockerfile: RinhaDeBackEnd.API/Dockerfile
     hostname: rinha-api-01
     depends_on:
       - db
@@ -23,7 +23,8 @@ services:
   rinha-api-02: # API - Instância 02
     image: rinhadebackend.api
     build:
-      dockerfile: src/RinhaDeBackEnd.API/Dockerfile
+      context: src
+      dockerfile: RinhaDeBackEnd.API/Dockerfile
     hostname: rinha-api-02
     depends_on:
       - db
