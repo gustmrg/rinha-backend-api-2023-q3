@@ -1,7 +1,7 @@
 ﻿version: "3.5"
 services:
   rinha-api-01: # API - Instância 01
-    image: rinhadebackend.api
+    image: gustmrg/rinha-backend-api
     build:
       context: src
       dockerfile: RinhaDeBackEnd.API/Dockerfile
@@ -21,7 +21,7 @@ services:
       - rinha-network
 
   rinha-api-02: # API - Instância 02
-    image: rinhadebackend.api
+    image: gustmrg/rinha-backend-api
     build:
       context: src
       dockerfile: RinhaDeBackEnd.API/Dockerfile
