@@ -19,7 +19,7 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image
-        run: docker image build -t ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }} -t ${{ env.DOCKER_IMAGE_NAME }}:latest src/RinhaDeBackEnd.API/
+        run: docker image build -t ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }} -t ${{ env.DOCKER_IMAGE_NAME }}:latest -f src/RinhaDeBackEnd.API/Dockerfile .
 
       - name: Push Docker image
         run: docker image push --all-tags ${{ env.DOCKER_IMAGE_NAME }}
