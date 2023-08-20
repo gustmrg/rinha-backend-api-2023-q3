@@ -24,3 +24,8 @@ jobs:
 
       - name: Push Docker image
         run: docker image push --all-tags ${{ env.DOCKER_IMAGE_NAME }}
+
+
+defaults:
+ run:
+  working-directory: ./src
