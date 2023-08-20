@@ -21,11 +21,11 @@ public class PessoasController : ControllerBase
     [HttpGet("/pessoas")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IResult> GetPessoasBySearchTermAsync([FromQuery] string? t)
+    public async Task<IResult> GetPessoasBySearchTermAsync([FromQuery(Name = "t")] string? query)
     {
-        return t == null ? 
+        return query == null ? 
             Results.BadRequest("É obrigatório informar um valor no parâmetro [t].") : 
-            Results.Ok(await _pessoaRepository.FindByTerm(t));
+            Results.Ok(await _pessoaRepository.FindByTerm(query));
     }
 
     [HttpGet("/pessoas/{id:guid}")]
@@ -55,6 +55,10 @@ public class PessoasController : ControllerBase
 
         if (!ModelState.IsValid)
             return Results.UnprocessableEntity();
+        
+        // validar se já existe uma pessoa cadastrada
+        if (_pessoaRepository.GetByApelido(request.Apelido) != null)
+            return Results.UnprocessableEntity("Já existe uma pessoa criada com este apelido.");
 
         try
         {

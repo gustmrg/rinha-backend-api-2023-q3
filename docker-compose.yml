@@ -11,7 +11,8 @@ services:
     expose:
       - "80"
     environment:
-      - DB_CONNECTION_STRING=Host=db;Username=admin;Password=postgrespw;Database=rinha;
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__PGCONN=Host=db;Port=5432;Username=admin;Password=postgrespw;Database=rinha;
     deploy:
       resources:
         limits:
@@ -31,7 +32,8 @@ services:
     expose:
       - "80"
     environment:
-      - DB_CONNECTION_STRING=Host=db:5432;Username=admin;Password=postgrespw;Database=rinha;
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__PGCONN=Host=db;Port=5432;Username=admin;Password=postgrespw;Database=rinha;
     deploy:
       resources:
         limits:

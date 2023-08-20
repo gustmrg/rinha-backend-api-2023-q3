@@ -1,7 +1,5 @@
 using System.Data;
 using Dapper;
-using Npgsql;
-using RinhaDeBackEnd.API.Helpers;
 using RinhaDeBackEnd.API.Interfaces;
 using RinhaDeBackEnd.API.Models;
 
@@ -9,20 +7,18 @@ namespace RinhaDeBackEnd.API.Repositories;
 
 public class PessoaRepository : IPessoaRepository
 {
-    private readonly DataContext _context;
+    private readonly IDbConnection _dbConnection;
 
-    public PessoaRepository(DataContext context)
+    public PessoaRepository(IDbConnection dbConnection)
     {
-        _context = context;
+        _dbConnection = dbConnection;
     }
-    
+
     public async Task<Pessoa> Add(Pessoa pessoa)
     {
         pessoa.Id = Guid.NewGuid();
         
-        using var connection = _context.CreateConnection();
-        
-        await connection.ExecuteAsync("INSERT INTO pessoas VALUES (@Id, @Apelido, @Nome, @Nascimento, @Stack)",
+        await _dbConnection.ExecuteAsync("INSERT INTO pessoas VALUES (@Id, @Apelido, @Nome, @Nascimento, @Stack)",
             new {
             id = pessoa.Id,
             apelido = pessoa.Apelido,
@@ -36,9 +32,7 @@ public class PessoaRepository : IPessoaRepository
     
     public IEnumerable<Pessoa> Get()
     {
-        using var connection = _context.CreateConnection();
-        
-        var pessoas = connection.Query<Pessoa>(
+        var pessoas = _dbConnection.Query<Pessoa>(
             "SELECT Id, Apelido, Nome, Nascimento, Stack FROM pessoas");
         
         return pessoas;
@@ -46,20 +40,25 @@ public class PessoaRepository : IPessoaRepository
 
     public async Task<Pessoa> GetById(Guid id)
     {
-        using var connection = _context.CreateConnection();
-        
-        var pessoa = await connection.QuerySingleOrDefaultAsync<Pessoa>(
+        var pessoa = await _dbConnection.QuerySingleOrDefaultAsync<Pessoa>(
             @"SELECT Id, Apelido, Nome, Nascimento, Stack FROM pessoas WHERE Id = @Id", 
             new { Id = id });
         
         return pessoa;
     }
     
+    public async Task<Pessoa> GetByApelido(string apelido)
+    {
+        var pessoa = await _dbConnection.QuerySingleOrDefaultAsync<Pessoa>(
+            @"SELECT Id, Apelido, Nome, Nascimento, Stack FROM pessoas WHERE Apelido = @Apelido", 
+            new { Apelido = apelido });
+        
+        return pessoa;
+    }
+    
     public async Task<IEnumerable<Pessoa>> FindByTerm(string term)
     {
-        using var connection = _context.CreateConnection();
-        
-        var pessoas = await connection.QueryAsync<Pessoa>(
+        var pessoas = await _dbConnection.QueryAsync<Pessoa>(
             @"SELECT *
                 FROM pessoas
                 WHERE Nome ILIKE '%' || @Term || '%'
@@ -84,9 +83,7 @@ public class PessoaRepository : IPessoaRepository
 
     public async Task<int> Count()
     {
-        using var connection = _context.CreateConnection();
-        
-        var count = await connection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM pessoas");
+        var count = await _dbConnection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM pessoas");
 
         return count;
     }

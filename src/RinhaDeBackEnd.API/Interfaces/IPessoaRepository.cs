@@ -8,6 +8,7 @@ public interface IPessoaRepository
     public IEnumerable<Pessoa> Get();
     public Task<IEnumerable<Pessoa>> FindByTerm(string term);
     public Task<Pessoa> GetById(Guid id);
+    public Task<Pessoa> GetByApelido(string apelido);
     public void UpdatePerson();
     public void DeletePerson();
     public Task<int> Count();
