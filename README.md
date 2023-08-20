@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img alt="Web API Logo" title="Web API Logo" src="https://github.com/gustmrg/rinha-backend-api/blob/main/img/api-logo.png" width="100px" />
+  <img alt="Web API Logo" title="Web API Logo" src="https://github.com/gustmrg/rinha-backend-api/blob/main/misc/img/api-logo.png" width="100px" />
 </h1>
 
 <p align="center">
@@ -14,7 +14,6 @@
 </p>
 
 <br>
-
 
 ## ✨ Tecnologias
 
