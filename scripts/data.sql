@@ -1,12 +1,25 @@
+CREATE EXTENSION pg_trgm;
+
+CREATE TEXT SEARCH CONFIGURATION BUSCA (COPY = portuguese);
+ALTER TEXT SEARCH CONFIGURATION BUSCA ALTER MAPPING FOR hword, hword_part, word WITH portuguese_stem;
+
+CREATE OR REPLACE FUNCTION ARRAY_TO_STRING_IMMUTABLE (
+  arr TEXT[],
+  sep TEXT
+) RETURNS TEXT IMMUTABLE PARALLEL SAFE LANGUAGE SQL AS $$
+SELECT ARRAY_TO_STRING(arr, sep) $$;
+
 CREATE TABLE IF NOT EXISTS pessoas (
     id UUID PRIMARY KEY,
     apelido VARCHAR(32) UNIQUE NOT NULL,
     nome VARCHAR(100) NOT NULL,
     nascimento DATE NOT NULL,
-    stack VARCHAR(32)[] NULL
+    stack VARCHAR(32)[] NULL,
+    search TEXT GENERATED ALWAYS AS (
+        nome || ' ' || apelido || ' ' || COALESCE(ARRAY_TO_STRING_IMMUTABLE(stack, ' '), '')
+    ) STORED,
+    CONSTRAINT pessoas_unique_apelido UNIQUE (apelido)
 );
 
-BEGIN;
-    CREATE INDEX IF NOT EXISTS idx_pessoas_nome ON pessoas USING btree(nome);
-    CREATE INDEX IF NOT EXISTS idx_pessoas_apelido ON pessoas USING btree(apelido);
-COMMIT;
+CREATE INDEX IF NOT EXISTS idx_pessoas_id ON pessoas (id);
+CREATE INDEX IF NOT EXISTS idx_pessoas_search ON pessoas USING GIST (search gist_trgm_ops);
