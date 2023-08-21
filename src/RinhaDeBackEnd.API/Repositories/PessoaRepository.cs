@@ -20,13 +20,10 @@ public class PessoaRepository : IPessoaRepository
 
         using (_dbConnection)
         {
-            if (_dbConnection.State != ConnectionState.Open)
-                _dbConnection.Open();
-            
             using var tran = _dbConnection.BeginTransaction();
             try
             {
-                var result = await _dbConnection.ExecuteAsync("INSERT INTO pessoas VALUES (@Id, @Apelido, @Nome, @Nascimento, @Stack)",
+                await _dbConnection.ExecuteAsync("INSERT INTO pessoas VALUES (@Id, @Apelido, @Nome, @Nascimento, @Stack)",
                     new
                     {
                         id = pessoa.Id,
@@ -36,16 +33,13 @@ public class PessoaRepository : IPessoaRepository
                         stack = pessoa.Stack
                     }, transaction: tran);
                 tran.Commit();
+                return pessoa;
             }
             catch (Exception)
             {
                 tran.Rollback();
                 throw;
             }
-
-            return await _dbConnection.QuerySingleOrDefaultAsync<Pessoa>(
-                @"SELECT Id, Apelido, Nome, Nascimento, Stack FROM pessoas WHERE Id = @Id",
-                new { Id = pessoa.Id });
         }
     }
 
@@ -53,9 +47,6 @@ public class PessoaRepository : IPessoaRepository
     {
         using (_dbConnection)
         {
-            if (_dbConnection.State != ConnectionState.Open)
-                _dbConnection.Open();
-            
             var pessoas = _dbConnection.Query<Pessoa>(
                 "SELECT Id, Apelido, Nome, Nascimento, Stack FROM pessoas");
 
@@ -67,9 +58,6 @@ public class PessoaRepository : IPessoaRepository
     {
         using (_dbConnection)
         {
-            if (_dbConnection.State != ConnectionState.Open)
-                _dbConnection.Open();
-            
             var pessoa = await _dbConnection.QuerySingleOrDefaultAsync<Pessoa>(
                 @"SELECT Id, Apelido, Nome, Nascimento, Stack FROM pessoas WHERE Id = @Id",
                 new { Id = id });
@@ -82,9 +70,6 @@ public class PessoaRepository : IPessoaRepository
     {
         using (_dbConnection)
         {
-            if (_dbConnection.State != ConnectionState.Open)
-                _dbConnection.Open();
-            
             var pessoas = await _dbConnection.QueryAsync<Pessoa>(
                 @"SELECT *
                     FROM pessoas
@@ -113,9 +98,6 @@ public class PessoaRepository : IPessoaRepository
     {
         using (_dbConnection)
         {
-            if (_dbConnection.State != ConnectionState.Open)
-                _dbConnection.Open();
-            
             var count = await _dbConnection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM pessoas");
 
             return count;

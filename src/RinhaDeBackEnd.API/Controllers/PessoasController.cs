@@ -1,9 +1,5 @@
-using System.Net.Mime;
 using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using Npgsql;
 using RinhaDeBackEnd.API.Interfaces;
 using RinhaDeBackEnd.API.Models;
 using PostgresException = Npgsql.PostgresException;
