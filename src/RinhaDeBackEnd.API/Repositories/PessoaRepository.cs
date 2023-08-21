@@ -20,26 +20,45 @@ public class PessoaRepository : IPessoaRepository
 
         using (_dbConnection)
         {
-            await _dbConnection.ExecuteAsync("INSERT INTO pessoas VALUES (@Id, @Apelido, @Nome, @Nascimento, @Stack)",
-                new {
-                id = pessoa.Id,
-                apelido = pessoa.Apelido,
-                nome = pessoa.Nome,
-                nascimento = pessoa.Nascimento,
-                stack = pessoa.Stack
-                });
+            if (_dbConnection.State != ConnectionState.Open)
+                _dbConnection.Open();
             
-            return pessoa;
+            using var tran = _dbConnection.BeginTransaction();
+            try
+            {
+                var result = await _dbConnection.ExecuteAsync("INSERT INTO pessoas VALUES (@Id, @Apelido, @Nome, @Nascimento, @Stack)",
+                    new
+                    {
+                        id = pessoa.Id,
+                        apelido = pessoa.Apelido,
+                        nome = pessoa.Nome,
+                        nascimento = pessoa.Nascimento,
+                        stack = pessoa.Stack
+                    }, transaction: tran);
+                tran.Commit();
+            }
+            catch (Exception)
+            {
+                tran.Rollback();
+                throw;
+            }
+
+            return await _dbConnection.QuerySingleOrDefaultAsync<Pessoa>(
+                @"SELECT Id, Apelido, Nome, Nascimento, Stack FROM pessoas WHERE Id = @Id",
+                new { Id = pessoa.Id });
         }
     }
-    
+
     public IEnumerable<Pessoa> Get()
     {
         using (_dbConnection)
         {
+            if (_dbConnection.State != ConnectionState.Open)
+                _dbConnection.Open();
+            
             var pessoas = _dbConnection.Query<Pessoa>(
                 "SELECT Id, Apelido, Nome, Nascimento, Stack FROM pessoas");
-            
+
             return pessoas;
         }
     }
@@ -48,39 +67,33 @@ public class PessoaRepository : IPessoaRepository
     {
         using (_dbConnection)
         {
+            if (_dbConnection.State != ConnectionState.Open)
+                _dbConnection.Open();
+            
             var pessoa = await _dbConnection.QuerySingleOrDefaultAsync<Pessoa>(
-                @"SELECT Id, Apelido, Nome, Nascimento, Stack FROM pessoas WHERE Id = @Id", 
+                @"SELECT Id, Apelido, Nome, Nascimento, Stack FROM pessoas WHERE Id = @Id",
                 new { Id = id });
-            
+
             return pessoa;
         }
     }
-    
-    public async Task<Pessoa> GetByApelido(string apelido)
-    {
-        using (_dbConnection)
-        {
-            var pessoa = await _dbConnection.QuerySingleOrDefaultAsync<Pessoa>(
-                @"SELECT Id, Apelido, Nome, Nascimento, Stack FROM pessoas WHERE Apelido = @Apelido", 
-                new { Apelido = apelido });
-            
-            return pessoa;
-        }
-    }
-    
+
     public async Task<IEnumerable<Pessoa>> FindByTerm(string term)
     {
         using (_dbConnection)
         {
+            if (_dbConnection.State != ConnectionState.Open)
+                _dbConnection.Open();
+            
             var pessoas = await _dbConnection.QueryAsync<Pessoa>(
                 @"SELECT *
                     FROM pessoas
                     WHERE Nome ILIKE '%' || @Term || '%'
 	                    OR Apelido ILIKE '%' || @Term || '%'
 	                    OR @Term ILIKE SOME(Stack)
-                    LIMIT 50;", 
-                new { Term = term } );
-            
+                    LIMIT 50;",
+                new { Term = term });
+
             return pessoas;
         }
     }
@@ -88,7 +101,7 @@ public class PessoaRepository : IPessoaRepository
 
     public void UpdatePerson()
     {
-        throw new NotImplementedException(); 
+        throw new NotImplementedException();
     }
 
     public void DeletePerson()
@@ -100,8 +113,11 @@ public class PessoaRepository : IPessoaRepository
     {
         using (_dbConnection)
         {
-            var count = await _dbConnection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM pessoas");
+            if (_dbConnection.State != ConnectionState.Open)
+                _dbConnection.Open();
             
+            var count = await _dbConnection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM pessoas");
+
             return count;
         }
     }

@@ -1,12 +1,15 @@
 using System.Data;
+using FluentValidation;
 using Npgsql;
 using RinhaDeBackEnd.API.Interfaces;
+using RinhaDeBackEnd.API.Models;
 using RinhaDeBackEnd.API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IDbConnection>(_ => new NpgsqlConnection(builder.Configuration.GetConnectionString("PGCONN")));
 builder.Services.AddScoped<IPessoaRepository, PessoaRepository>();
+builder.Services.AddScoped<IValidator<Pessoa>, PessoaValidator>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

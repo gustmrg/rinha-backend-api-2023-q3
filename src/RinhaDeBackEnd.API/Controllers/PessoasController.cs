@@ -1,4 +1,6 @@
 using System.Net.Mime;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Npgsql;
@@ -11,11 +13,13 @@ namespace RinhaDeBackEnd.API.Controllers;
 [ApiController]
 public class PessoasController : ControllerBase
 {
+    private readonly IValidator<Pessoa> _validator;
     private readonly IPessoaRepository _pessoaRepository;
 
-    public PessoasController(IPessoaRepository pessoaRepository)
+    public PessoasController(IPessoaRepository pessoaRepository, IValidator<Pessoa> validator)
     {
         _pessoaRepository = pessoaRepository;
+        _validator = validator;
     }
     
     [HttpGet("/pessoas")]
@@ -52,14 +56,11 @@ public class PessoasController : ControllerBase
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public async Task<IResult> CreatePersonAsync(Pessoa request)
     {
+        var result = await _validator.ValidateAsync(request);
 
-        if (!ModelState.IsValid)
-            return Results.UnprocessableEntity();
+        if (!result.IsValid)
+            return Results.UnprocessableEntity(result.Errors);
         
-        // validar se já existe uma pessoa cadastrada
-        if (_pessoaRepository.GetByApelido(request.Apelido) != null)
-            return Results.UnprocessableEntity("Já existe uma pessoa criada com este apelido.");
-
         try
         {
             var pessoa = await _pessoaRepository.Add(request);
